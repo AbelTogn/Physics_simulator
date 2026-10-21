@@ -882,8 +882,6 @@ static void collideWithSceneObjects(float dt)
         SceneObject *o = &sceneObjects[i];
 
         if (o->type == SCENE_WALL) {
-            /* Collision sphere englobante contre un mur rectangulaire
-               de longueur 5, d'epaisseur 0.3 et de hauteur 4. */
             Vector3 half = mul(o->size, 0.5f);
             Vector3 closest = V(
                 clampf(body.position.x, o->position.x - half.x, o->position.x + half.x),
@@ -903,8 +901,7 @@ static void collideWithSceneObjects(float dt)
                 body.velocity = sub(body.velocity, mul(tangent, clampf(fminf(body.friction, o->friction) * 0.08f, 0.0f, 0.8f)));
             }
         } else {
-            /* Pente de 6 x 3 m. La surface monte vers +x.
-               On utilise la sphere englobante pour le contact. */
+            /* Pente de 6 x 3 m. La surface monte vers +x.*/
             float dx = body.position.x - o->position.x;
             float dz = body.position.z - o->position.z;
             if (fabsf(dx) > o->size.x * 0.5f + r || fabsf(dz) > o->size.z * 0.5f + r)
@@ -953,9 +950,7 @@ static Vector3 pendulumBobPosition(const Pendulum *p)
     );
 }
 
-/* Collision entre chaque boule de pendule et l'objet physique principal.
-   La boule est traitée comme une sphère; le transfert angulaire du pendule
-   est calculé autour de son pivot. */
+/* Collision entre chaque boule de pendule et l'objet physique principal.*/
 static void collidePendulumsWithBody(void)
 {
     float bodyRadius = shape.radius;
@@ -974,7 +969,6 @@ static void collidePendulumsWithBody(void)
             ? mul(delta, 1.0f / distance) : V(1.0f, 0.0f, 0.0f);
         float penetration = minDistance - distance;
 
-        /* On écarte l'objet principal; le pendule reste attaché à son pivot. */
         body.position = add(body.position, mul(normal, penetration + 0.001f));
 
         Vector3 bobVelocity = V(
@@ -991,7 +985,6 @@ static void collidePendulumsWithBody(void)
                             (1.0f / body.mass + 1.0f / p->mass);
             body.velocity = add(body.velocity, mul(normal, impulse / body.mass));
 
-            /* Couple impulsionnel simplifié appliqué au pendule. */
             Vector3 impulseOnBob = mul(normal, -impulse);
             Vector3 arm = sub(bob, p->pivot);
             Vector3 torque = cross(arm, impulseOnBob);
@@ -1456,8 +1449,6 @@ int main(void)
         if (IsKeyPressed(KEY_F))
             showFields = !showFields;
 
-        /* Raylib utilise les positions de touches QWERTY : Z sur AZERTY
-           occupe la position de W. On accepte donc les deux. */
         if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_Z))
             wireframe = !wireframe;
 
@@ -1477,7 +1468,6 @@ int main(void)
         if (IsKeyPressed(KEY_E) && !objectPlacementMode)
             placementMode = 1;
 
-        /* Sur un clavier AZERTY, la touche physique QWERTY est etiquetee A. */
         if ((IsKeyPressed(KEY_Q) || IsKeyPressed(KEY_A)) &&
             !objectPlacementMode)
             placementMode = -1;
@@ -1485,7 +1475,6 @@ int main(void)
         if (IsKeyPressed(KEY_B) && !objectPlacementMode)
             placementMode = 2;
 
-        /* Sur AZERTY, M se trouve a la position de ; en QWERTY. */
         if ((IsKeyPressed(KEY_M) || IsKeyPressed(KEY_SEMICOLON)) &&
             !objectPlacementMode)
             placementMode = 3;
@@ -1599,7 +1588,6 @@ int main(void)
             }
         }
 
-        /* Actualise le point de placement sous le curseur. */
         if (objectPlacementMode) {
             Vector3 p;
 
